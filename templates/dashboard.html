@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Live Matches</h2>
+<div id="live-container">Loading...</div>
+<script>
+  async function refresh() {
+    const r = await fetch('/api/live_matches');
+    const data = await r.json();
+    const container = document.getElementById('live-container');
+    container.innerHTML = '';
+    if (data.matches.length===0) {
+      container.innerHTML = '<p>No live matches</p>';
+      return;
+    }
+    for (const m of data.matches) {
+      const el = document.createElement('div');
+      el.innerHTML = `<strong>${m.player}</strong> - ${m.team} vs ${m.opponent} (${m.goals ?? '-'}) [${m.status}]`;
+      container.appendChild(el);
+    }
+  }
+  setInterval(refresh, 10000);
+  window.addEventListener('load', refresh);
+</script>
+
+<h2>Daily Stats</h2>
+{% if stats %}
+  <table>
+    <thead><tr><th>Player</th><th>Matches</th><th>Wins</th><th>Goals</th><th>Goals Against</th><th>Winrate</th></tr></thead>
+    <tbody>
+    {% for s in stats %}
+      <tr>
+        <td>{{ s.player }}</td>
+        <td>{{ s.matches }}</td>
+        <td>{{ s.wins }}</td>
+        <td>{{ s.goals }}</td>
+        <td>{{ s.goals_against }}</td>
+        <td>{{ s.winrate }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No stats yet for today.</p>
+{% endif %}
+{% endblock %}

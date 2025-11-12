@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Relatórios</h2>
+<form method="post">
+  <label>Email to send daily report (leave empty to only generate):</label>
+  <input name="email_to" placeholder="you@example.com">
+  <button type="submit">Generate daily report</button>
+</form>
+{% endblock %}

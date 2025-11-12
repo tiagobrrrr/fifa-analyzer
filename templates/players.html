@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Players</h2>
+<form method="post" action="{{ url_for('players_add') }}">
+  <input name="username" placeholder="username" required>
+  <input name="display_name" placeholder="display name">
+  <button type="submit">Add</button>
+</form>
+<ul>
+  {% for p in players %}
+    <li>{{ p.username }} ({{ p.display_name }})
+      <form style="display:inline" method="post" action="{{ url_for('players_delete', player_id=p.id) }}">
+        <button type="submit">Delete</button>
+      </form>
+    </li>
+  {% endfor %}
+</ul>
+{% endblock %}

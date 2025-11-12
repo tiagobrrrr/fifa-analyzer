@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Matches (page {{ page }})</h2>
+<table>
+  <thead><tr><th>Player</th><th>Team</th><th>Opponent</th><th>Goals</th><th>Status</th><th>Date</th></tr></thead>
+  <tbody>
+    {% for m in matches %}
+      <tr>
+        <td>{{ m.player }}</td>
+        <td>{{ m.team }}</td>
+        <td>{{ m.opponent }}</td>
+        <td>{{ m.goals }} - {{ m.goals_against }}</td>
+        <td>{{ m.status }}</td>
+        <td>{{ m.date }} {{ m.time }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
