@@ -1,23 +1,30 @@
 import smtplib
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 class EmailService:
     def __init__(self):
-        self.sender_email = "tiagoandrade070310@gmail.com"
-        self.sender_password = "uqgchmrxvptytwan"
+        self.sender_email = "tiagoh736@gmail.com"
+        self.app_password = "whmc jkdn csev mpjm"
 
-    def send_email(self, recipient_email, subject, message):
+    def send_email(self, to_email, subject, message):
         try:
-            msg = MIMEText(message)
-            msg["Subject"] = subject
+            msg = MIMEMultipart()
             msg["From"] = self.sender_email
-            msg["To"] = recipient_email
+            msg["To"] = to_email
+            msg["Subject"] = subject
 
-            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-                server.login(self.sender_email, self.sender_password)
-                server.sendmail(self.sender_email, recipient_email, msg.as_string())
+            msg.attach(MIMEText(message, "plain"))
+
+            server = smtplib.SMTP("smtp.gmail.com", 587)
+            server.starttls()
+            server.login(self.sender_email, self.app_password)
+            server.send_message(msg)
+            server.quit()
 
             print("Email enviado com sucesso!")
+            return True
 
         except Exception as e:
-            print(f"Erro ao enviar email: {e}")
+            print("Erro ao enviar email:", e)
+            return False
