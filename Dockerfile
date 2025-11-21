@@ -1,28 +1,40 @@
-# Base image
 FROM python:3.12-slim
 
-# Set working directory
+# Evita prompts do Debian
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Define diretório da aplicação
 WORKDIR /app
 
-# Install system dependencies
+# Instalar dependências do sistema
 RUN apt-get update && apt-get install -y \
     build-essential \
     gcc \
     libglib2.0-0 \
     libgl1 \
+    libssl-dev \
+    libffi-dev \
+    wget \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for caching
+# Instalar Chrome + ChromeDriver (compatíveis com Selenium)
+RUN apt-get update && apt-get install -y \
+    chromium \
+    chromium-driver \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar requirements
 COPY requirements.txt .
 
-# Install Python dependencies
+# Instalar pacotes Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project files
+# Copiar o projeto
 COPY . .
 
-# Make start.sh executable
+# Permitir execução
 RUN chmod +x start.sh
 
-# Start the app
-CMD ["bash", "start.sh"]
+# Comando de inicialização
+CMD ["./start.sh"]
