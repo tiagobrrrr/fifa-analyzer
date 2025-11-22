@@ -1,40 +1,35 @@
+# ---- Base Python Image ----
 FROM python:3.12-slim
 
-# Evita prompts do Debian
-ENV DEBIAN_FRONTEND=noninteractive
+# ---- Set env ----
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
-# Define diretório da aplicação
+# ---- Install system deps ----
+RUN apt-get update && apt-get install -y \
+    curl wget unzip chromium chromium-driver build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# ---- Set working dir ----
 WORKDIR /app
 
-# Instalar dependências do sistema
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    gcc \
-    libglib2.0-0 \
-    libgl1 \
-    libssl-dev \
-    libffi-dev \
-    wget \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
-
-# Instalar Chrome + ChromeDriver (compatíveis com Selenium)
-RUN apt-get update && apt-get install -y \
-    chromium \
-    chromium-driver \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copiar requirements
+# ---- Copy requirements ----
 COPY requirements.txt .
 
-# Instalar pacotes Python
+# ---- Install Python deps ----
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar o projeto
+# ---- Create folder for SQLite ----
+RUN mkdir -p /app/data && chmod -R 777 /app/data
+
+# ---- Copy project ----
 COPY . .
 
-# Permitir execução
+# ---- Permission for start.sh ----
 RUN chmod +x start.sh
 
-# Comando de inicialização
+# ---- Expose port ----
+EXPOSE 5000
+
+# ---- Start ----
 CMD ["./start.sh"]
